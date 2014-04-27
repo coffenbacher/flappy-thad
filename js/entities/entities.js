@@ -7,12 +7,14 @@ var BirdEntity = me.ObjectEntity.extend({
     settings.spritewidth = 85;
     settings.spriteheight= 60;
 
+
     this.parent(x, y, settings);
     this.alwaysUpdate = true;
-    this.gravity = 0.2;
-    this.gravityForce = 0.01;
-    this.maxAngleRotation = Number.prototype.degToRad(30);
-    this.maxAngleRotationDown = Number.prototype.degToRad(90);
+    this.gravity = 0.6;
+    this.impulse = 9;
+    this.dy = 0;
+    this.maxAngleRotation = Number.prototype.degToRad(25);
+    this.maxAngleRotationDown = Number.prototype.degToRad(40);
     this.renderable.addAnimation("flying", [0, 1, 2]);
     this.renderable.addAnimation("idle", [0]);
     this.renderable.setCurrentAnimation("flying");
@@ -29,19 +31,14 @@ var BirdEntity = me.ObjectEntity.extend({
     // mechanics
     if (game.data.start) {
       if (me.input.isKeyPressed('fly')) {
-        this.gravityForce = 0.01;
-
         var currentPos = this.pos.y;
         // stop the previous one
-        this.flyTween.stop()
-        this.flyTween.to({y: currentPos - 72}, 100);
-        this.flyTween.start();
-
-        this.renderable.angle = -this.maxAngleRotation;
+        this.dy = -this.impulse;
+        //this.renderable.angle = -this.maxAngleRotation;
       } else {
-        this.gravityForce += 0.2;
-        this.pos.y += me.timer.tick * this.gravityForce;
-        this.renderable.angle += Number.prototype.degToRad(3) * me.timer.tick;
+        this.dy += me.timer.tick * this.gravity;
+        this.pos.y += this.dy;
+        this.renderable.angle = Math.pow(Number.prototype.degToRad(this.dy*2), 2);
         if (this.renderable.angle > this.maxAngleRotationDown)
           this.renderable.angle = this.maxAngleRotationDown;
       }
@@ -106,6 +103,35 @@ var PipeEntity = me.ObjectEntity.extend({
 
 });
 
+var DistractingEntity = me.ObjectEntity.extend({
+  init: function(x, y) {
+    var settings = {};
+    settings.image = me.loader.getImage('d'+(Math.floor(Math.random()*3)+1));
+    console.log('d'+Math.floor(Math.random()*3)+1);
+    settings.width = 148;
+    settings.height= 1664;
+    settings.spritewidth = 148;
+    settings.spriteheight= 1664;
+
+
+    this.parent(x, y, settings);
+    this.alwaysUpdate = true;
+    this.gravity = 5;
+    this.updateTime = false;
+  },
+
+  update: function(dt) {
+    // mechanics
+    this.pos.add(new me.Vector2d(-this.gravity * me.timer.tick, 0));
+    if (this.pos.x < -148) {
+      me.game.world.removeChild(this);
+    }
+    return true;
+  },
+
+});
+
+
 var PipeGenerator = me.Renderable.extend({
   init: function() {
     this.parent(new me.Vector2d(), me.game.viewport.width, me.game.viewport.height);
@@ -113,6 +139,8 @@ var PipeGenerator = me.Renderable.extend({
     this.generate = 0;
     this.pipeFrequency = 92;
     this.pipeHoleSize = 1240;
+    this.distractingPeriod = 8;
+    this.minimumDistractingStep = 4;
     this.posX = me.game.viewport.width;
   },
 
@@ -123,13 +151,26 @@ var PipeGenerator = me.Renderable.extend({
           200
       );
       var posY2 = posY - me.video.getHeight() - this.pipeHoleSize;
+
       var pipe1 = new me.pool.pull("pipe", this.posX, posY);
-      var pipe2 = new me.pool.pull("pipe", this.posX, posY2);
+      //var pipe2 = new me.pool.pull("distracting", this.posX, posY2);
+      if (game.data.steps > this.minimumDistractingStep && game.data.steps % this.distractingPeriod == 0) {
+          var pipe2 = new me.pool.pull("distracting", this.posX, posY2);
+          if (this.distractingPeriod > 1) {
+            this.distractingPeriod--;
+          }
+      }
+      else {
+          var pipe2 = new me.pool.pull("pipe", this.posX, posY2);
+      }
+
       var hitPos = posY - 100;
       var hit = new me.pool.pull("hit", this.posX, hitPos);
       pipe1.renderable.flipY();
+      //me.game.world.addChild(distracting, 10);
       me.game.world.addChild(pipe1, 10);
       me.game.world.addChild(pipe2, 10);
+
       me.game.world.addChild(hit, 11);
     }
     return true;

@@ -28,6 +28,7 @@ var game = {
 
     me.pool.register("clumsy", BirdEntity);
     me.pool.register("pipe", PipeEntity, true);
+    me.pool.register("distracting", DistractingEntity, true);
     me.pool.register("hit", HitEntity, true);
 
     // in melonJS 1.0.0, viewport size is set to Infinity by default

@@ -40,7 +40,7 @@ game.TitleScreen = me.ScreenObject.extend({
             // renderable
             this.parent(new me.Vector2d(), 100, 100);
             //this.font = new me.Font('Arial Black', 20, 'black', 'left');
-            this.text = me.device.touch ? 'Tap to start' : 'PRESS SPACE OR CLICK LEFT MOUSE BUTTON TO START';
+            this.text = me.device.touch ? 'Tap to start' : 'BUENOS AFTERNOON BROBEANS, PRESS SPACE, SNAP A DICK PIC, AND GET READY';
             this.font = new me.Font('gamefont', 20, '#000');
         },
         update: function () {
@@ -48,7 +48,7 @@ game.TitleScreen = me.ScreenObject.extend({
         },
         draw: function (context) {
             var measure = this.font.measureText(context, this.text);
-            this.font.draw(context, this.text, me.game.viewport.width/2 - measure.width/2, me.game.viewport.height/2 + 50);
+            this.font.draw(context, this.text, me.game.viewport.width/2 - measure.width/2, me.game.viewport.height/2 + 260);
         }
     })), 12);
   },

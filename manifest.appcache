@@ -3,13 +3,6 @@ CACHE MANIFEST
 # Time: Fri Mar 28 2014 12:19:25 GMT-0300 (BRT)
 
 CACHE:
-js/game.js
-js/resources.js
-js/entities/entities.js
-js/entities/HUD.js
-js/screens/title.js
-js/screens/play.js
-js/screens/gameover.js
 
 NETWORK:
 *
