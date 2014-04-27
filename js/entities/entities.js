@@ -106,7 +106,7 @@ var PipeEntity = me.ObjectEntity.extend({
 var DistractingEntity = me.ObjectEntity.extend({
   init: function(x, y) {
     var settings = {};
-    settings.image = me.loader.getImage('d'+(Math.floor(Math.random()*3)+1));
+    settings.image = me.loader.getImage('d'+(Math.floor(Math.random()*7)+1));
     console.log('d'+Math.floor(Math.random()*3)+1);
     settings.width = 148;
     settings.height= 1664;
